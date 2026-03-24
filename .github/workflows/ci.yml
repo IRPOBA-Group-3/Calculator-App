@@ -9,7 +9,6 @@ on:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
-    # Hier erzwingen wir Bash für alle Schritte, damit Windows nicht die PowerShell nutzt
     defaults:
       run:
         shell: bash
