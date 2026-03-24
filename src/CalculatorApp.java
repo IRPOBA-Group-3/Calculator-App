@@ -6,7 +6,7 @@ public class CalculatorApp extends JFrame {
     private final JTextField firstNumberField;
     private final JTextField secondNumberField;
     private final JLabel resultLabel;
-    private final Calculator calculator;
+    private final Calculator calculator
 
     public CalculatorApp() {
         calculator = new Calculator();
