@@ -24,6 +24,7 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+      # Caching der Abhängigkeiten für schnellere Builds
       - name: Cache Java dependencies
         uses: actions/cache@v4
         with:
@@ -38,6 +39,11 @@ jobs:
 
       - name: Java-Dateien kompilieren
         run: javac -d build src/*.java
+
+      # Metrik: Größe des Build-Ordners in den Logs anzeigen
+      - name: Check Build Size
+        run: du -sh build/
+        shell: bash
 
       - name: Build-Artefakte hochladen
         uses: actions/upload-artifact@v4
