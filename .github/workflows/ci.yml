@@ -9,6 +9,10 @@ on:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
+    # Hier erzwingen wir Bash für alle Schritte, damit Windows nicht die PowerShell nutzt
+    defaults:
+      run:
+        shell: bash
 
     strategy:
       matrix:
@@ -24,10 +28,9 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      # Startzeit für Performance-Tracking (plattformübergreifend via Bash)
+      # Startzeit für Performance-Tracking
       - name: Start Timer
         run: echo "START_TIME=$(date +%s)" >> "$GITHUB_ENV"
-        shell: bash
 
       - name: Cache Java dependencies
         uses: actions/cache@v4
@@ -39,7 +42,6 @@ jobs:
 
       - name: Build-Ordner erstellen
         run: mkdir -p build
-        shell: bash
 
       - name: Java-Dateien kompilieren
         run: javac -d build src/*.java
@@ -50,12 +52,10 @@ jobs:
           name: compiled-files-${{ matrix.os }}
           path: build/
           
-      # Monitoring: Benachrichtigung bei Erfolg (Visibility)
       - name: Notify on success
         if: success()
         run: echo "::notice::Build auf ${{ matrix.os }} erfolgreich abgeschlossen!"
 
-      # Monitoring: Benachrichtigung bei Fehler (Visibility)
       - name: Notify on failure
         if: failure()
         run: echo "::error::Build auf ${{ matrix.os }} fehlgeschlagen! Bitte Logs prüfen."
@@ -68,7 +68,17 @@ jobs:
         run: |
           END_TIME=$(date +%s)
           DURATION=$((END_TIME - START_TIME))
-          # Größe berechnen (Fallback auf 0B falls build leer)
+          # Größe berechnen
           SIZE=$(du -sh build/ | cut -f1 || echo "0B")
           
-          # Zeitstempel im
+          # Zeitstempel im deutschen Format
+          AKTUELLE_ZEIT=$(date +'%d.%m.%Y %H:%M:%S')
+          
+          echo "### 🚀 CI Build Report (${{ matrix.os }})" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Metric | Value |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| :--- | :--- |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| **OS Platform** | ${{ matrix.os }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| **Build Status** | ${{ job.status }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| **Artifact Size** | $SIZE |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| **Build Duration** | ${DURATION}s |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| **Zeitpunkt** | $AKTUELLE_ZEIT |" >> "$GITHUB_STEP_SUMMARY"
