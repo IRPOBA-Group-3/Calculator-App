@@ -26,7 +26,7 @@ jobs:
 
       # Startzeit für Performance-Tracking (plattformübergreifend via Bash)
       - name: Start Timer
-        run: echo "START_TIME=$(date +%s)" >> $GITHUB_ENV
+        run: echo "START_TIME=$(date +%s)" >> "$GITHUB_ENV"
         shell: bash
 
       - name: Cache Java dependencies
@@ -71,13 +71,4 @@ jobs:
           # Größe berechnen (Fallback auf 0B falls build leer)
           SIZE=$(du -sh build/ | cut -f1 || echo "0B")
           
-          # Zeitstempel im Format: Tag.Monat.Jahr Uhrzeit (Europa/Berlin)
-          AKTUELLE_ZEIT=$(date +'%d.%m.%Y %H:%M:%S')
-          
-          echo "### 🚀 CI Build Report (${{ matrix.os }})" >> $GITHUB_STEP_SUMMARY
-          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
-          echo "| :--- | :--- |" >> $GITHUB_STEP_SUMMARY
-          echo "| **OS Platform** | ${{ matrix.os }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Build Status** | ${{ job.status }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Artifact Size** | $SIZE |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Build Duration** | ${DURATION}s |" >> $GITHUB
+          # Zeitstempel im
