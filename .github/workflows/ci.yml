@@ -24,7 +24,6 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      # Startzeit für Performance-Tracking (Linux/macOS/Windows via Bash)
       - name: Start Timer
         run: echo "START_TIME=$(date +%s)" >> $GITHUB_ENV
         shell: bash
@@ -50,26 +49,30 @@ jobs:
           name: compiled-files-${{ matrix.os }}
           path: build/
           
-      # Monitoring: Benachrichtigung bei Erfolg (Visibility)
       - name: Notify on success
         if: success()
         run: echo "::notice::Build auf ${{ matrix.os }} erfolgreich abgeschlossen!"
 
-      # Monitoring: Benachrichtigung bei Fehler (Visibility)
       - name: Notify on failure
         if: failure()
         run: echo "::error::Build auf ${{ matrix.os }} fehlgeschlagen! Bitte Logs prüfen."
 
-      # Professionelle Zusammenfassung (Performance Metrics Tracking)
       - name: Create Summary
         if: always()
         run: |
           END_TIME=$(date +%s)
           DURATION=$((END_TIME - START_TIME))
-          # Größe berechnen (Fallback auf 0B falls build leer)
           SIZE=$(du -sh build/ | cut -f1 || echo "0B")
           
-          # Zeitstempel im deutschen Format (mit Berlin Zeitzone)
+          # Deutsches Format: Tag.Monat.Jahr Uhrzeit
           GERMAN_TIME=$(TZ="Europe/Berlin" date +'%d.%m.%Y %H:%M:%S')
           
-          echo "### 🚀 CI Build Report (${{ matrix.os
+          echo "### 🚀 CI Build Report (${{ matrix.os }})" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "| :--- | :--- |" >> $GITHUB_STEP_SUMMARY
+          echo "| **OS Platform** | ${{ matrix.os }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Build Status** | ${{ job.status }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Artifact Size** | $SIZE |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Build Duration** | ${DURATION}s |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Zeitpunkt (DE)** | $GERMAN_TIME |" >> $GITHUB_STEP_SUMMARY
+        shell: bash
