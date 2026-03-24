@@ -69,12 +69,7 @@ jobs:
           # Größe berechnen (Fallback auf 0B falls build leer)
           SIZE=$(du -sh build/ | cut -f1 || echo "0B")
           
-          echo "### 🚀 CI Build Report (${{ matrix.os }})" >> $GITHUB_STEP_SUMMARY
-          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
-          echo "| :--- | :--- |" >> $GITHUB_STEP_SUMMARY
-          echo "| **OS Platform** | ${{ matrix.os }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Build Status** | ${{ job.status }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Artifact Size** | $SIZE |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Build Duration** | ${DURATION}s |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Timestamp** | $(date +'%Y-%m-%d %H:%M:%S') |" >> $GITHUB_STEP_SUMMARY
-        shell: bash
+          # Zeitstempel im deutschen Format (mit Berlin Zeitzone)
+          GERMAN_TIME=$(TZ="Europe/Berlin" date +'%d.%m.%Y %H:%M:%S')
+          
+          echo "### 🚀 CI Build Report (${{ matrix.os
