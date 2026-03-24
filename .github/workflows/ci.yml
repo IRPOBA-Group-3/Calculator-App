@@ -24,7 +24,6 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      # Caching der Abhängigkeiten für schnellere Builds
       - name: Cache Java dependencies
         uses: actions/cache@v4
         with:
@@ -40,7 +39,6 @@ jobs:
       - name: Java-Dateien kompilieren
         run: javac -d build src/*.java
 
-      # Metrik: Größe des Build-Ordners in den Logs anzeigen
       - name: Check Build Size
         run: du -sh build/
         shell: bash
@@ -54,3 +52,13 @@ jobs:
       - name: Notify on failure
         if: failure()
         run: echo "::warning::Build failed on ${{ matrix.os }}!"
+
+      # HIER GANZ AM ENDE EINFÜGEN:
+      - name: Create Summary
+        if: always()
+        run: |
+          echo "### 🚀 Build Report" >> $GITHUB_STEP_SUMMARY
+          echo "* **Betriebssystem:** ${{ matrix.os }}" >> $GITHUB_STEP_SUMMARY
+          echo "* **Build-Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "* **Ordner-Größe:** $(du -sh build/ | cut -f1)" >> $GITHUB_STEP_SUMMARY
+        shell: bash
