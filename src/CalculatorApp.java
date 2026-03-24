@@ -11,8 +11,6 @@ public class CalculatorApp extends JFrame {
     public CalculatorApp() {
         calculator = new Calculator();
 
-        Hier ist ein Fehler;
-
         setTitle("Calculator App");
         setSize(350, 250);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
