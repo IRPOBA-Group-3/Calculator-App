@@ -36,3 +36,7 @@ jobs:
         with:
           name: compiled-files-${{ matrix.os }}
           path: build/
+         
+      - name: Notify on failure
+        if: failure()
+        run: echo "::warning::Build failed on ${{ matrix.os }}!"
