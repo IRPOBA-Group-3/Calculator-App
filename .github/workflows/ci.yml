@@ -24,8 +24,16 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+      - name: Cache Java dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-java-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-java-
+
       - name: Build-Ordner erstellen
-        run: mkdir build
+        run: mkdir -p build
         shell: bash
 
       - name: Java-Dateien kompilieren
@@ -36,7 +44,7 @@ jobs:
         with:
           name: compiled-files-${{ matrix.os }}
           path: build/
-         
+          
       - name: Notify on failure
         if: failure()
         run: echo "::warning::Build failed on ${{ matrix.os }}!"
