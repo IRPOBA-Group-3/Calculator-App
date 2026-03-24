@@ -21,10 +21,10 @@ jobs:
       - name: Java einrichten
         uses: actions/setup-java@v4
         with:
-          distribution: temurin
+          distribution: 'temurin'
           java-version: '17'
 
-      # Startzeit für Performance-Tracking speichern
+      # Startzeit für Performance-Tracking (Linux/macOS/Windows via Bash)
       - name: Start Timer
         run: echo "START_TIME=$(date +%s)" >> $GITHUB_ENV
         shell: bash
@@ -44,33 +44,37 @@ jobs:
       - name: Java-Dateien kompilieren
         run: javac -d build src/*.java
 
-      - name: Check Build Size
-        run: du -sh build/
-        shell: bash
-
       - name: Build-Artefakte hochladen
         uses: actions/upload-artifact@v4
         with:
           name: compiled-files-${{ matrix.os }}
           path: build/
           
+      # Monitoring: Benachrichtigung bei Erfolg (Visibility)
+      - name: Notify on success
+        if: success()
+        run: echo "::notice::Build auf ${{ matrix.os }} erfolgreich abgeschlossen!"
+
+      # Monitoring: Benachrichtigung bei Fehler (Visibility)
       - name: Notify on failure
         if: failure()
-        run: echo "::warning::Build failed on ${{ matrix.os }}!"
+        run: echo "::error::Build auf ${{ matrix.os }} fehlgeschlagen! Bitte Logs prüfen."
 
-      # Professionelle Zusammenfassung (Monitoring & Visibility)
+      # Professionelle Zusammenfassung (Performance Metrics Tracking)
       - name: Create Summary
         if: always()
         run: |
           END_TIME=$(date +%s)
           DURATION=$((END_TIME - START_TIME))
-          SIZE=$(du -sh build/ | cut -f1)
+          # Größe berechnen (Fallback auf 0B falls build leer)
+          SIZE=$(du -sh build/ | cut -f1 || echo "0B")
           
-          echo "### 🚀 CI Build Report" >> $GITHUB_STEP_SUMMARY
+          echo "### 🚀 CI Build Report (${{ matrix.os }})" >> $GITHUB_STEP_SUMMARY
           echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
           echo "| :--- | :--- |" >> $GITHUB_STEP_SUMMARY
           echo "| **OS Platform** | ${{ matrix.os }} |" >> $GITHUB_STEP_SUMMARY
           echo "| **Build Status** | ${{ job.status }} |" >> $GITHUB_STEP_SUMMARY
           echo "| **Artifact Size** | $SIZE |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Duration** | ${DURATION}s |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Build Duration** | ${DURATION}s |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Timestamp** | $(date +'%Y-%m-%d %H:%M:%S') |" >> $GITHUB_STEP_SUMMARY
         shell: bash
