@@ -35,7 +35,7 @@ public class CalculatorApp extends JFrame {
         buttonPanel.setBackground(new Color(30, 30, 30));
 
         String[] buttons = {
-                "C", "⌫", "%", "/",
+                "C", "Del", "%", "/",
                 "7", "8", "9", "*",
                 "4", "5", "6", "-",
                 "1", "2", "3", "+",
@@ -77,7 +77,7 @@ public class CalculatorApp extends JFrame {
             case "C":
                 clearAll();
                 break;
-            case "DEL":
+            case "Del":
                 deleteLastCharacter();
                 break;
             case "+/-":
