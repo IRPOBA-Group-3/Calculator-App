@@ -60,10 +60,12 @@ public class CalculatorApp extends JFrame {
         button.setFocusPainted(false);
         button.setFont(new Font("Arial", Font.BOLD, 20));
         button.setForeground(Color.WHITE);
+        button.setOpaque(true);
+        button.setBorderPainted(false);
 
-        if ("+-*/=".contains(text) || text.equals("/")) {
+        if (text.equals("/") || text.equals("*") || text.equals("-") || text.equals("+") || text.equals("=")) {
             button.setBackground(new Color(255, 140, 0));
-        } else if (text.equals("C") || text.equals("DEL") || text.equals("%") || text.equals("+/-")) {
+        } else if (text.equals("C") || text.equals("Del") || text.equals("%")) {
             button.setBackground(new Color(90, 90, 90));
         } else {
             button.setBackground(new Color(60, 60, 60));
@@ -105,6 +107,10 @@ public class CalculatorApp extends JFrame {
     }
 
     private void appendNumber(String number) {
+        if (display.getText().equals("Error") || display.getText().equals("Cannot divide by 0")) {
+            display.setText("0");
+        }
+
         if (startNewNumber) {
             display.setText(number);
             startNewNumber = false;
@@ -118,6 +124,10 @@ public class CalculatorApp extends JFrame {
     }
 
     private void addDecimalPoint() {
+        if (display.getText().equals("Error") || display.getText().equals("Cannot divide by 0")) {
+            display.setText("0");
+        }
+
         if (startNewNumber) {
             display.setText("0.");
             startNewNumber = false;
@@ -133,13 +143,18 @@ public class CalculatorApp extends JFrame {
             startNewNumber = true;
         } catch (NumberFormatException ex) {
             display.setText("Error");
+            startNewNumber = true;
         }
     }
 
     private void calculateResult() {
         try {
+            if (currentOperation.isEmpty()) {
+                return;
+            }
+
             double secondNumber = Double.parseDouble(display.getText());
-            double result = 0;
+            double result;
 
             switch (currentOperation) {
                 case "+":
@@ -159,13 +174,16 @@ public class CalculatorApp extends JFrame {
             }
 
             display.setText(formatResult(result));
+            firstNumber = result;
             currentOperation = "";
             startNewNumber = true;
 
         } catch (NumberFormatException ex) {
             display.setText("Error");
+            startNewNumber = true;
         } catch (IllegalArgumentException ex) {
             display.setText("Cannot divide by 0");
+            startNewNumber = true;
         }
     }
 
@@ -177,6 +195,7 @@ public class CalculatorApp extends JFrame {
             startNewNumber = true;
         } catch (NumberFormatException ex) {
             display.setText("Error");
+            startNewNumber = true;
         }
     }
 
@@ -187,12 +206,20 @@ public class CalculatorApp extends JFrame {
             display.setText(formatResult(result));
         } catch (NumberFormatException ex) {
             display.setText("Error");
+            startNewNumber = true;
         }
     }
 
     private void deleteLastCharacter() {
         String text = display.getText();
-        if (text.length() > 1 && !startNewNumber) {
+
+        if (text.equals("Error") || text.equals("Cannot divide by 0")) {
+            display.setText("0");
+            startNewNumber = true;
+            return;
+        }
+
+        if (!startNewNumber && text.length() > 1) {
             display.setText(text.substring(0, text.length() - 1));
         } else {
             display.setText("0");
@@ -211,7 +238,9 @@ public class CalculatorApp extends JFrame {
         if (result == (long) result) {
             return String.valueOf((long) result);
         }
-        return String.valueOf(result);
+        return String.format("%.10f", result)
+                .replaceAll("0+$", "")
+                .replaceAll("\\.$", "");
     }
 
     public static void main(String[] args) {
