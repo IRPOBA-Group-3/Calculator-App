@@ -1,0 +1,11 @@
+# Default owners
+* @EdisSuljevic @Dogus4133 @milica-simikic
+
+# CI workflow and GitHub config
+.github/ @EdisSuljevic
+
+# Source code
+src/ @Dogus4133
+
+# Documentation
+README.md @milica-simikic
