@@ -3,30 +3,32 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class CalculatorAppTest {
+public class CalculatorTest {
+
+    private final Calculator calculator = new Calculator();
 
     @Test
     void testAddition() {
-        assertEquals(5, CalculatorApp.add(2, 3));
+        assertEquals(5, calculator.add(2, 3));
     }
 
     @Test
     void testSubtraction() {
-        assertEquals(3, CalculatorApp.subtract(5, 2));
+        assertEquals(3, calculator.subtract(5, 2));
     }
 
     @Test
     void testMultiplication() {
-        assertEquals(12, CalculatorApp.multiply(4, 3));
+        assertEquals(12, calculator.multiply(4, 3));
     }
 
     @Test
     void testDivision() {
-        assertEquals(4, CalculatorApp.divide(8, 2));
+        assertEquals(4, calculator.divide(8, 2));
     }
 
     @Test
     void testDivisionByZero() {
-        assertThrows(IllegalArgumentException.class, () -> CalculatorApp.divide(8, 0));
+        assertThrows(IllegalArgumentException.class, () -> calculator.divide(8, 0));
     }
 }
