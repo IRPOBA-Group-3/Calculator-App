@@ -10,10 +10,6 @@ jobs:
   build:
     runs-on: ${{ matrix.os }}
 
-    defaults:
-      run:
-        shell: bash
-
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
@@ -26,46 +22,55 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: 17
+          cache: maven
 
       - name: Start Timer
-        run: echo "START_TIME=$(date +%s)" >> "$GITHUB_ENV"
+        shell: bash
+        run: echo "START_TIME=$(date +%s)" >> $GITHUB_ENV
 
-      - name: Build-Ordner erstellen
-        run: mkdir -p build
+      - name: Projekt kompilieren
+        run: mvn clean compile
 
-      - name: Java-Dateien kompilieren
-        run: javac -d build src/*.java
+      - name: Tests ausfuehren
+        run: mvn test
 
-      - name: Build-Artefakte hochladen
+      - name: Linting mit Checkstyle
+        run: mvn checkstyle:check
+
+      - name: Paket erstellen
+        run: mvn package
+
+      - name: Artefakte hochladen
         uses: actions/upload-artifact@v4
         with:
-          name: compiled-files-${{ matrix.os }}
-          path: build/
+          name: build-artifacts-${{ matrix.os }}
+          path: |
+            target/*.jar
+            target/surefire-reports/*
+            target/checkstyle-result.xml
+          if-no-files-found: warn
 
-      - name: Notify on success
+      - name: Erfolgsmeldung
         if: success()
-        run: echo "::notice::Build auf ${{ matrix.os }} erfolgreich abgeschlossen!"
+        run: echo "::notice::Build, Tests und Linting auf ${{ matrix.os }} erfolgreich."
 
-      - name: Notify on failure
+      - name: Fehlermeldung
         if: failure()
-        run: echo "::error::Build auf ${{ matrix.os }} fehlgeschlagen. Bitte Logs prüfen."
+        run: echo "::error::Build, Tests oder Linting auf ${{ matrix.os }} fehlgeschlagen."
 
-      - name: Create Summary
+      - name: Summary erstellen
         if: always()
-        env:
-          TZ: Europe/Berlin
+        shell: bash
         run: |
           END_TIME=$(date +%s)
           DURATION=$((END_TIME - START_TIME))
-          SIZE=$(du -sh build/ | cut -f1 || echo "0B")
-          AKTUELLE_ZEIT=$(date +'%d.%m.%Y %H:%M:%S')
-
-          echo "### CI Build Report (${{ matrix.os }})" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Metric | Value |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| :--- | :--- |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| **OS Platform** | ${{ matrix.os }} |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| **Build Status** | ${{ job.status }} |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| **Artifact Size** | $SIZE |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| **Build Duration** | ${DURATION}s |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| **Zeitpunkt** | $AKTUELLE_ZEIT |" >> "$GITHUB_STEP_SUMMARY"
+          TARGET_SIZE=$(du -sh target 2>/dev/null | cut -f1 || echo "nicht vorhanden")
+          echo "## CI Build Report (${{ matrix.os }})" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Metrik | Wert |" >> $GITHUB_STEP_SUMMARY
+          echo "|---|---|" >> $GITHUB_STEP_SUMMARY
+          echo "| Plattform | ${{ matrix.os }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Build Status | ${{ job.status }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Dauer | ${DURATION} Sekunden |" >> $GITHUB_STEP_SUMMARY
+          echo "| Artefaktgroesse | ${TARGET_SIZE} |" >> $GITHUB_STEP_SUMMARY
