@@ -2,17 +2,17 @@ name: CI Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main ]  # Startet bei Push auf main
   pull_request:
-    branches: [ main ]
+    branches: [ main ]  # Startet auch bei Pull Requests auf main
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}  # Job läuft je nach Matrix auf Ubuntu oder Windows
 
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest]  # Multi-Platform Build
 
     steps:
       - name: Repository auschecken
@@ -30,13 +30,13 @@ jobs:
         run: echo "START_TIME=$(date +%s)" >> $GITHUB_ENV
 
       - name: Projekt kompilieren
-        run: mvn clean compile
+        run: mvn clean compile   # Code kompilieren
 
       - name: Tests ausfuehren
-        run: mvn test
+        run: mvn test   # JUnit Tests starten
 
       - name: Linting mit Checkstyle
-        run: mvn checkstyle:check
+        run: mvn checkstyle:check  # Code-Stil prüfen
 
       - name: Paket erstellen
         run: mvn package
