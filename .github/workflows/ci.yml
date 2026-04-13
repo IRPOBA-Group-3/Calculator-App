@@ -9,6 +9,7 @@ on:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
+
     defaults:
       run:
         shell: bash
@@ -24,20 +25,11 @@ jobs:
       - name: Java einrichten
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
+          distribution: temurin
           java-version: '17'
 
-      # Startzeit für Performance-Tracking
       - name: Start Timer
         run: echo "START_TIME=$(date +%s)" >> "$GITHUB_ENV"
-
-      - name: Cache Java dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-java-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-java-
 
       - name: Build-Ordner erstellen
         run: mkdir -p build
@@ -50,16 +42,15 @@ jobs:
         with:
           name: compiled-files-${{ matrix.os }}
           path: build/
-          
+
       - name: Notify on success
         if: success()
         run: echo "::notice::Build auf ${{ matrix.os }} erfolgreich abgeschlossen!"
 
       - name: Notify on failure
         if: failure()
-        run: echo "::error::Build auf ${{ matrix.os }} fehlgeschlagen! Bitte Logs prüfen."
+        run: echo "::error::Build auf ${{ matrix.os }} fehlgeschlagen. Bitte Logs prüfen."
 
-      # Professionelle Zusammenfassung (Performance Metrics Tracking)
       - name: Create Summary
         if: always()
         env:
@@ -67,13 +58,10 @@ jobs:
         run: |
           END_TIME=$(date +%s)
           DURATION=$((END_TIME - START_TIME))
-          # Größe berechnen
           SIZE=$(du -sh build/ | cut -f1 || echo "0B")
-          
-          # Zeitstempel im deutschen Format
           AKTUELLE_ZEIT=$(date +'%d.%m.%Y %H:%M:%S')
-          
-          echo "### 🚀 CI Build Report (${{ matrix.os }})" >> "$GITHUB_STEP_SUMMARY"
+
+          echo "### CI Build Report (${{ matrix.os }})" >> "$GITHUB_STEP_SUMMARY"
           echo "| Metric | Value |" >> "$GITHUB_STEP_SUMMARY"
           echo "| :--- | :--- |" >> "$GITHUB_STEP_SUMMARY"
           echo "| **OS Platform** | ${{ matrix.os }} |" >> "$GITHUB_STEP_SUMMARY"
