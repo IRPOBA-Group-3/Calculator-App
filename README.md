@@ -1,7 +1,7 @@
 # IRPOBA-Group-3
 Themengebiet 5 - CI with Actions (Intro)
 
-[![CI Pipeline](https://github.com/EdisSuljevic/IRPOBA-Group-3/actions/workflows/ci.yml/badge.svg)](https://github.com/EdisSuljevic/IRPOBA-Group-3/actions/workflows/ci.yml)
+[![CI Pipeline](https://github.com/IRPOBA-Group-3/Calculator-App/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/IRPOBA-Group-3/Calculator-App/actions/workflows/ci.yml)
 
 ## 🛠 CI/CD Monitoring Features
 In diesem Projekt nutzen wir GitHub Actions für eine automatisierte Pipeline:
