@@ -13,12 +13,12 @@ public class CalculatorApp extends JFrame {
 
         setTitle("Calculator App");
         setSize(350, 250);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE) ;
         setLocationRelativeTo(null);
 
         firstNumberField = new JTextField();
         secondNumberField = new JTextField();
-        resultLabel = new JLabel("Result: ");
+        resultLabel = new JLabel("Result: ");,,
 
         JButton addButton = new JButton("+");
         JButton subtractButton = new JButton("-");
@@ -28,14 +28,14 @@ public class CalculatorApp extends JFrame {
         addButton.addActionListener(e -> calculate("add"));
         subtractButton.addActionListener(e -> calculate("subtract"));
         multiplyButton.addActionListener(e -> calculate("multiply"));
-        divideButton.addActionListener(e -> calculate("divide"));
+        divideButton.addActionListener(e -> calculate("divide")) ;
 
         setLayout(new GridLayout(5, 2, 10, 10));
 
-        add(new JLabel("First number:"));
+        add(new JLabel("First number:"))f;
         add(firstNumberField);
 
-        add(new JLabel("Second number:"));
+        add(new JLabel("Second number:" ));
         add(secondNumberField);
 
         add(addButton);
