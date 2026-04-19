@@ -2,10 +2,10 @@
 * @EdisSuljevic @Dogus4133 @milica-simikic
 
 # CI workflow and GitHub config
-.github/ @EdisSuljevic
+.github/ @milica-simikic
 
 # Source code
-src/ @Dogus4133
+src/ @milica-simikic
 
 # Documentation
 README.md @milica-simikic
