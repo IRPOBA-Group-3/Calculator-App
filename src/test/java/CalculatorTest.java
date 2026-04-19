@@ -31,4 +31,14 @@ public class CalculatorTest {
     void testDivisionByZero() {
         assertThrows(IllegalArgumentException.class, () -> calculator.divide(8, 0));
     }
+
+    @Test
+    void testPercent() {
+        assertEquals(0.5, calculator.percent(50));
+    }
+
+    @Test
+    void testNegate() {
+        assertEquals(-5, calculator.negate(5));
+    }
 }
